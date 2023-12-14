@@ -1,32 +1,37 @@
-swap.c
 #include "monty.h"
-/**
- * f_swap - adds the top two elements of the stack.
- * @head: stack head
- * @counter: line_number
- * Return: no return
-*/
-void f_swap(stack_t **head, unsigned int counter)
-{
-	stack_t *h;
-	int len = 0, aux;
 
-	h = *head;
-	while (h)
+/**
+ * swap_elem - swaps the top two elements of the stack
+ *
+ * @stack: pointer to a pointer, points to the top of the stack
+ * @line_number: the line number where opcode is found
+ *
+ * Return: void (nothing)
+ */
+void swap_elem(stack_t **stack, unsigned int line_number)
+{
+	int count = 0;
+	int tmp;
+	stack_t *ptr;
+
+	ptr = *stack;
+
+	while (ptr)
 	{
-		h = h->next;
-		len++;
+		count++;
+		ptr = ptr->next;
 	}
-	if (len < 2)
+	if (count < 2)
 	{
-		fprintf(stderr, "L%d: can't swap, stack too short\n", counter);
-		fclose(bus.file);
-		free(bus.content);
-		free_stack(*head);
+		fprintf(stderr, "L%d: can't swap, stack too short\n", line_number);
+		fclose(instance_vars.file);
+		free_struct(*stack);
+		free(instance_vars.line);
 		exit(EXIT_FAILURE);
 	}
-	h = *head;
-	aux = h->n;
-	h->n = h->next->n;
-	h->next->n = aux;
+
+	ptr = *stack;
+	tmp = ptr->n;
+	ptr->n = ptr->next->n;
+	ptr->next->n = tmp;
 }

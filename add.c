@@ -1,33 +1,44 @@
-add.c
 #include "monty.h"
-/**
- * f_add - adds the top two elements of the stack.
- * @head: stack head
- * @counter: line_number
- * Return: no return
-*/
-void f_add(stack_t **head, unsigned int counter)
-{
-	stack_t *h;
-	int len = 0, aux;
 
-	h = *head;
-	while (h)
+/**
+ * add_elem - function that adds the top two elements of the stack
+ * the result is stored in the second top element of the stack and
+ * the top element is removed, so that at the end:
+ * the top element of the stack contains the result
+ * the stack is one element shorter
+ *
+ * @stack: pointer to a pointer, points to the top of the stack
+ * @line_number: line number where opcode is found
+ *
+ * Return: void (nothing)
+ */
+void add_elem(stack_t **stack, unsigned int line_number)
+{
+	stack_t *ptr;
+	int temp;
+	int count = 0;
+
+	ptr = *stack;
+
+	while (ptr)
 	{
-		h = h->next;
-		len++;
+		count++;
+		ptr = ptr->next;
 	}
-	if (len < 2)
+
+	if (count < 2)
 	{
-		fprintf(stderr, "L%d: can't add, stack too short\n", counter);
-		fclose(bus.file);
-		free(bus.content);
-		free_stack(*head);
+		fprintf(stderr, "L%d: can't add, stack too short\n", line_number);
+		fclose(instance_vars.file);
+		free_struct(*stack);
+		free(instance_vars.line);
+
 		exit(EXIT_FAILURE);
 	}
-	h = *head;
-	aux = h->n + h->next->n;
-	h->next->n = aux;
-	*head = h->next;
-	free(h);
+	ptr = *stack;
+	temp = (ptr->n) + (ptr->next->n);
+	ptr->next->n = temp;
+	*stack = ptr->next;
+
+	free(ptr);
 }

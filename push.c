@@ -1,38 +1,53 @@
-push.c
 #include "monty.h"
-/**
- * f_push - add node to the stack
- * @head: stack head
- * @counter: line_number
- * Return: no return
-*/
-void f_push(stack_t **head, unsigned int counter)
-{
-	int n, j = 0, flag = 0;
 
-	if (bus.arg)
+/**
+ * stack_push - function that inserts elements into a stack
+ *
+ * @stack: pointer to a pointer, points to the top of the stack
+ * @line_number: the line number where the opcode is found
+ *
+ * Return: Nothing (void)
+ */
+void stack_push(stack_t **stack, unsigned int line_number)
+{
+	stack_t *top;
+	int n, i = 0;
+	int flag = 0;
+
+	if (instance_vars.monty_arg != NULL)
 	{
-		if (bus.arg[0] == '-')
-			j++;
-		for (; bus.arg[j] != '\0'; j++)
+		if (instance_vars.monty_arg[0] == '-')
+			i++;
+		while (instance_vars.monty_arg[i] != '\0')
 		{
-			if (bus.arg[j] > 57 || bus.arg[j] < 48)
-				flag = 1; }
+			if (instance_vars.monty_arg[i] < '0' || instance_vars.monty_arg[i] > '9')
+				flag = 1;
+			i++;
+		}
 		if (flag == 1)
-		{ fprintf(stderr, "L%d: usage: push integer\n", counter);
-			fclose(bus.file);
-			free(bus.content);
-			free_stack(*head);
-			exit(EXIT_FAILURE); }}
+		{
+			fprintf(stderr, "L%d: usage: push integer\n", line_number);
+			fclose(instance_vars.file);
+			free_struct(*stack), free(instance_vars.line);
+			exit(EXIT_FAILURE);
+		}
+	}
 	else
-	{ fprintf(stderr, "L%d: usage: push integer\n", counter);
-		fclose(bus.file);
-		free(bus.content);
-		free_stack(*head);
-		exit(EXIT_FAILURE); }
-	n = atoi(bus.arg);
-	if (bus.lifi == 0)
-		addnode(head, n);
-	else
-		addqueue(head, n);
+	{
+		fprintf(stderr, "L%d: usage: push integer\n", line_number);
+		fclose(instance_vars.file);
+		free_struct(*stack), free(instance_vars.line);
+		exit(EXIT_FAILURE);
+	}
+	top = malloc(sizeof(stack_t));
+	if (top == NULL)
+	{
+		free(top);
+		fprintf(stderr, "Error: malloc failed\n");
+	}
+	n = atoi(instance_vars.monty_arg);
+	if ((*stack) != NULL)
+		(*stack)->prev = top;
+	top->n = n, top->next = *stack, top->prev = NULL;
+	*stack = top;
 }
