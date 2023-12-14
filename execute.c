@@ -1,57 +1,52 @@
 #include "monty.h"
-
 /**
- * execute - executes the opcode
- *
- * @stack: pointer to a pointer, pointing to the top of the stack
- * @line_number: the number of file lines counted,
- * line number where opcode is found
- * @file: the Monty bytecode file
- * @content: content of the current file line
- *
- * Return: 0 (Success)
- */
-int execute(stack_t **stack, unsigned int line_number, char *content,
-		FILE *file)
+* execute - executes the opcode
+* @stack: head linked list - stack
+* @counter: line_counter
+* @file: poiner to monty file
+* @content: line content
+* Return: no return
+*/
+int execute(char *content, stack_t **stack, unsigned int counter, FILE *file)
 {
+	instruction_t opst[] = {
+				{"push", f_push}, {"pall", f_pall}, {"pint", f_pint},
+				{"pop", f_pop},
+				{"swap", f_swap},
+				{"add", f_add},
+				{"nop", f_nop},
+				{"sub", f_sub},
+				{"div", f_div},
+				{"mul", f_mul},
+				{"mod", f_mod},
+				{"pchar", f_pchar},
+				{"pstr", f_pstr},
+				{"rotl", f_rotl},
+				{"rotr", f_rotr},
+				{"queue", f_queue},
+				{"stack", f_stack},
+				{NULL, NULL}
+				};
 	unsigned int i = 0;
 	char *op;
 
-	instruction_t op_list[] = {
-		{"push", stack_push},
-		{"pall", struct_pall},
-		{"pint", pint_top},
-		{"pop", pop_top},
-		{"swap", swap_elem},
-		{"add", add_elem},
-		{"nop", nop},
-		{"sub", sub_elem},
-		{"div", div_elem},
-		{NULL, NULL}
-	};
-
 	op = strtok(content, " \n\t");
-
-	if (op != NULL && op[0] == '#')
+	if (op && op[0] == '#')
 		return (0);
-	instance_vars.monty_arg = strtok(NULL, " \n\t");
-
-	while (op != NULL && op_list[i].opcode)
+	bus.arg = strtok(NULL, " \n\t");
+	while (opst[i].opcode && op)
 	{
-		if (strcmp(op, op_list[i].opcode) == 0)
-		{
-			op_list[i].f(stack, line_number);
+		if (strcmp(op, opst[i].opcode) == 0)
+		{	opst[i].f(stack, counter);
 			return (0);
 		}
 		i++;
 	}
-	if (op && op_list[i].opcode == NULL)
-	{
-		fprintf(stderr, "L%d: unknown instruction %s\n", line_number, op);
+	if (op && opst[i].opcode == NULL)
+	{ fprintf(stderr, "L%d: unknown instruction %s\n", counter, op);
 		fclose(file);
 		free(content);
-		free_struct(*stack);
-		exit(EXIT_FAILURE);
-	}
+		free_stack(*stack);
+		exit(EXIT_FAILURE); }
 	return (1);
 }
